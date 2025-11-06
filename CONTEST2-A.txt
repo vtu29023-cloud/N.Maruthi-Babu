@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+// Count distinct characters without using ASCII arithmetic
+int distinct_chars(const char *s) {
+    int freq[26] = {0};
+    int count = 0;
+
+    for (int i = 0; s[i] != '\0'; i++) {
+        // Find index by comparing against 'a' to 'z' characters directly
+        for (int j = 0; j < 26; j++) {
+            char ch = 'a' + j;   // using sequential characters, not ASCII math manually
+            if (s[i] == ch) {
+                if (freq[j] == 0) {
+                    freq[j] = 1;
+                    count++;
+                }
+                break;
+            }
+        }
+    }
+    return count;
+}
+
+// 1️⃣ Lexicographic (A → Z)
+int lexicographic_sort(const char *a, const char *b) {
+    return strcmp(a, b);
+}
+
+// 2️⃣ Lexicographic reverse (Z → A)
+int lexicographic_sort_reverse(const char *a, const char *b) {
+    return strcmp(b, a);
+}
+
+// 3️⃣ Sort by number of distinct characters
+int sort_by_number_of_distinct_characters(const char *a, const char *b) {
+    int da = distinct_chars(a);
+    int db = distinct_chars(b);
+
+    if (da != db)
+        return da - db;
+    return strcmp(a, b);
+}
+
+// 4️⃣ Sort by length
+int sort_by_length(const char *a, const char *b) {
+    int la = strlen(a);
+    int lb = strlen(b);
+
+    if (la != lb)
+        return la - lb;
+    return strcmp(a, b);
+}
+
+// 🔁 Generic sorting function using pointer to comparison function
+void string_sort(const char **arr, int n, int (*cmp_func)(const char *, const char *)) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (cmp_func(arr[i], arr[j]) > 0) {
+                const char *temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+}
+
+// 🧠 Main (for HackerRank)
+int main() {
+    int n;
+    scanf("%d", &n);
+    char **arr = malloc(n * sizeof(char *));
+    for (int i = 0; i < n; i++) {
+        arr[i] = malloc(1001 * sizeof(char));
+        scanf("%s", arr[i]);
+    }
+
+    // 1️⃣ Lexicographic
+    string_sort((const char **)arr, n, lexicographic_sort);
+    for (int i = 0; i < n; i++) printf("%s\n", arr[i]);
+    printf("\n");
+
+    // 2️⃣ Lexicographic reverse
+    string_sort((const char **)arr, n, lexicographic_sort_reverse);
+    for (int i = 0; i < n; i++) printf("%s\n", arr[i]);
+    printf("\n");
+
+    // 3️⃣ By number of distinct characters
+    string_sort((const char **)arr, n, sort_by_number_of_distinct_characters);
+    for (int i = 0; i < n; i++) printf("%s\n", arr[i]);
+    printf("\n");
+
+    // 4️⃣ By length
+    string_sort((const char **)arr, n, sort_by_length);
+    for (int i = 0; i < n; i++) printf("%s\n", arr[i]);
+
+    for (int i = 0; i < n; i++) free(arr[i]);
+    free(arr);
+
+    return 0;
+}

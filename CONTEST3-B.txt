@@ -1,0 +1,58 @@
+(ns solution
+  (:gen-class)
+  (:require [clojure.string :as str]
+            [clojure.set :as set]))
+
+(def EDGE-WEIGHT 6)
+
+(defn bfs [n edges s]
+  ;; Build adjacency list
+  (let [adj (reduce (fn [m [u v]]
+                      (-> m
+                          (update u conj v)
+                          (update v conj u)))
+                    (into {} (map #(vector % #{}) (range 1 (inc n))))
+                    edges)
+        queue (java.util.LinkedList.)
+        visited (boolean-array (inc n))
+        dist (vec (repeat (inc n) -1))]
+    ;; Start BFS
+    (.add queue s)
+    (aset-boolean visited s true)
+    (loop [dists (assoc dist s 0)]
+      (if (.isEmpty queue)
+        ;; Return distances excluding start node
+        (->> (range 1 (inc n))
+             (remove #(= % s))
+             (map #(if (neg? (dists %)) -1 (dists %)))
+             (map #(if (zero? %) 0 %))
+             (map #(if (pos? %) (* % EDGE-WEIGHT) %)))
+        (let [node (.poll queue)
+              neighbors (adj node)]
+          (recur
+           (reduce
+            (fn [dists v]
+              (if (aget visited v)
+                dists
+                (do
+                  (.add queue v)
+                  (aset-boolean visited v true)
+                  (assoc dists v (inc (dists node))))))
+            dists
+            neighbors)))))))
+
+(defn -main [& _]
+  (let [input (-> (slurp in) str/trim str/split-lines)
+        t (Integer/parseInt (first input))
+        lines (rest input)]
+    (loop [queries t
+           ls lines]
+      (when (pos? queries)
+        (let [[n m] (map #(Integer/parseInt %) (str/split (first ls) #" "))
+              edge-lines (take m (rest ls))
+              edges (map #(mapv parse-long (str/split % #" ")) edge-lines)
+              s (Integer/parseInt (nth ls (inc m)))
+              result (bfs n edges s)
+              remaining (drop (+ m 2) ls)]
+          (println (str/join " " result))
+          (recur (dec queries) remaining))))))

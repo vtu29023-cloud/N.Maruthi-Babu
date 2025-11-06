@@ -1,0 +1,35 @@
+#include <stdio.h> 
+int gcd(int a, int b) { 
+    while (b != 0) { 
+        int temp = b; 
+        b = a % b; 
+        a = temp; 
+    } 
+    return a; 
+} 
+int main() { 
+    int n, k; 
+    scanf("%d %d", &n, &k); 
+    int arr[n]; 
+    for (int i = 0; i < n; i++) { 
+        scanf("%d", &arr[i]); 
+    } 
+    int maxLength = 0; 
+    for (int i = 0; i < n; i++) { 
+        if (arr[i] < k) continue; 
+        int currentGcd = arr[i]; 
+        int length = 1; 
+        for (int j = i + 1; j < n; j++) { 
+            currentGcd = gcd(currentGcd, arr[j]); 
+            if (currentGcd < k) break; 
+            length++; 
+        } 
+ 
+        if (length > maxLength) { 
+            maxLength = length; 
+        } 
+    } 
+ 
+    printf("%d\n", maxLength); 
+    return 0; 
+}

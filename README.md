@@ -1,2 +1,1 @@
-# N.Maruthi-Babu
-Competitve Coding 
+# CC_LABTASK

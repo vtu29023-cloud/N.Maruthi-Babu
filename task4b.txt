@@ -1,0 +1,18 @@
+#include <stdio.h> 
+#define MOD 1000000007 
+int fibonacciSum(int n) { 
+    int prev = 0, curr = 1, next, sum = 0, i; 
+    for (i = 0; i <= n; i++) { 
+        sum = (sum + curr) % MOD; 
+        next = (prev + curr) % MOD; 
+        prev = curr; 
+        curr = next; 
+    } 
+    return sum; 
+} 
+int main() { 
+    int N; 
+scanf("%d", &N); 
+printf("%d\n", fibonacciSum(N)); 
+return 0; 
+}

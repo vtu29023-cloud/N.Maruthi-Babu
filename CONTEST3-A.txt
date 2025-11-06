@@ -1,0 +1,28 @@
+(ns solution
+  (:gen-class))
+
+(def MOD (+ 100000000 7))
+
+;; Precompute Catalan numbers up to 1000
+(defn precompute-catalan [limit]
+  (let [cat (transient [1])]    ; C0 = 1
+    (loop [n 1 arr cat]
+      (if (> n limit)
+        (persistent! arr)
+        (let [sum (reduce
+                    (fn [acc i]
+                      (mod (+ acc (* (nth arr i)
+                                     (nth arr (- (dec n) i))))
+                           MOD))
+                    0
+                    (range n))]
+          (recur (inc n) (conj! arr sum)))))))
+
+(defn -main [& args]
+  (let [input (slurp in)
+        lines (clojure.string/split-lines input)
+        t (Integer/parseInt (first lines))
+        nums (map #(Integer/parseInt %) (rest lines))
+        catalans (precompute-catalan 1000)]
+    (doseq [n nums]
+      (println (nth catalans n)))))

@@ -1,0 +1,56 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <time.h> 
+// Function for modular exponentiation (a^b % mod) 
+long long power(long long a, long long b, long long mod) { 
+    long long result = 1; 
+    a = a % mod; 
+    while (b > 0) { 
+        if (b & 1) 
+            result = (result * a) % mod; 
+        b = b >> 1; 
+        a = (a * a) % mod; 
+    } 
+    return result; 
+} 
+// Miller test for a single base 'a' 
+int millerTest(long long d, long long n) { 
+    long long a = 2 + rand() % (n - 4); 
+    long long x = power(a, d, n); 
+    if (x == 1 || x == n - 1) 
+        return 1; 
+    while (d != n - 1) { 
+        x = (x * x) % n; 
+        d *= 2; 
+        if (x == 1) return 0; 
+        if (x == n - 1) return 1; 
+    } 
+    return 0; 
+} 
+// Miller-Rabin primality test 
+int isPrimeMillerRabin(long long n, int k) { 
+    if (n <= 1 || n == 4) return 0; 
+    if (n <= 3) return 1; 
+    long long d = n - 1; 
+    while (d % 2 == 0) 
+        d /= 2; 
+    for (int i = 0; i < k; i++) { 
+        if (!millerTest(d, n)) 
+            return 0; 
+    } 
+    return 1; 
+} 
+int main() { 
+    srand(time(0)); 
+    long long n; 
+    int k; 
+    printf("Enter number to test: "); 
+    scanf("%lld", &n); 
+    printf("Enter number of iterations: "); 
+    scanf("%d", &k); 
+    if (isPrimeMillerRabin(n, k)) 
+        printf("%lld is probably prime.\n", n); 
+    else 
+        printf("%lld is composite.\n", n); 
+    return 0; 
+}

@@ -1,0 +1,17 @@
+#include <stdio.h> 
+unsigned int reverseBits(unsigned int num) { 
+    unsigned int reversed = 0; 
+    int bits = sizeof(num) * 8; 
+    for (int i = 0; i < bits; i++) { 
+        if (num & (1 << i)) { 
+            reversed |= 1 << (bits - 1 - i); 
+        } 
+    } 
+    return reversed; 
+} 
+int main() { 
+    unsigned int num = 10; 
+    printf("%u\n", num); 
+    printf("%u\n", reverseBits(num)); 
+    return 0; 
+}
